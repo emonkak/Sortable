@@ -294,6 +294,9 @@
 				dragStartFn;
 
 			if (target && !dragEl && (target.parentNode === el)) {
+				// Suppresses text selection
+				if (!supportDraggable) evt.preventDefault();
+
 				tapEvt = evt;
 
 				rootEl = el;
@@ -302,6 +305,8 @@
 				activeGroup = options.group;
 
 				dragStartFn = function () {
+					if (!dragEl) return;
+
 					// Delayed drag has been triggered
 					// we can re-enable the events: touchmove/mousemove
 					_this._disableDelayedDrag();
@@ -329,6 +334,8 @@
 					_on(ownerDocument, 'touchmove', _this._disableDelayedDrag);
 
 					_this._dragStartTimer = setTimeout(dragStartFn, options.delay);
+				} else if (!supportDraggable) {
+					setTimeout(dragStartFn, 0);
 				} else {
 					dragStartFn();
 				}
